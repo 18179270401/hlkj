@@ -1,0 +1,21 @@
+#订单
+*/30 * * * * /usr/bin/curl http://47.105.35.227:8084/index.php/api/amazon.Order/ListOrder
+
+#订单内商品详情
+*/2 * * * * /usr/bin/curl http://47.105.35.227:8084/index.php/api/amazon.Order/ListOrderItems
+
+#付款事件
+* */1 * * * /usr/bin/curl http://47.105.35.227:8084/index.php/api/amazon.Financial/FinancialListFinancialEventGroupsList
+
+#获取review页面HTML
+*/10 * * * * /usr/bin/curl http://47.105.35.227:8084/spider/review/getReviewHTML
+
+
+#获取review页面HTML
+*/10 * * * * /usr/bin/curl http://47.105.35.227:8084/spider/review/readReviewFile
+
+#统计每个产品每天销售量 和 销售额
+*/1 * * * * /usr/bin/curl http://47.105.35.227:8084/index.php/statistics/Product_sale_statistics/index
+
+#统计内部SKU产品每日销量 和 销售额
+*/1 * * * * /usr/bin/curl http://47.105.35.227:8084/index.php/statistics/Product_sale_statistics/product_in_sku_sale
