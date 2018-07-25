@@ -1,0 +1,478 @@
+{include file='public/head'}
+<body>
+<style type="text/css" media="screen">
+header {
+    color: black;
+}
+</style>
+
+<div class="x-body" style="width: 70%">
+	<form class="layui-form" id="mainForm" action="" method="">
+		<div class="layui-form-item">
+            <label class="layui-form-label">所属分类</label>
+            <div class="layui-input-block">
+                <select id="ProductType" name="ProductType" value="" class="layui-select" style="width:50%;">
+                	<option value="">==请选择==</option>
+					{volist name="CategoryList" id="vo" key="i"}
+					<option value={$vo.CategoryName}>{$vo.CategoryName}</option>
+					{/volist} 
+                </select>
+            </div>
+        </div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">产品编码</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductNo" name="ProductNo" lay-verify="required" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">产品SKU</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductSKU" name="ProductSKU" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">产品名称</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductName" name="ProductName" lay-verify="required" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">采购价格(TAX)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductPurchaseTax" name="ProductPurchaseTax" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">采购价格</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductPurchase" name="ProductPurchase" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">产品状态</label>
+			<div class="layui-input-block">
+				<select id="ProductStatus" name="ProductStatus" class="layui-select" style="width:50%;">
+					<option value="">==请选择==</option>
+					<option value="正常">正常</option>
+					<option value="异常">异常</option>
+					<option value="其他">其他</option>
+				</select>
+				</span>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">销售状态</label>
+			<div class="layui-input-block">
+				<select id="ProductSellSta" name="ProductSellSta" class="layui-select" style="width:50%;">
+					<option value="">==请选择==</option>
+					<option value="正常">正常</option>
+					<option value="异常">异常</option>
+					<option value="其他">其他</option>
+				</select>
+				</span>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">所属品牌</label>
+			<div class="layui-input-block">
+				<select id="ProductTrademark" name="ProductTrademark" class="layui-select" style="width:50%;">
+					<option value="">==请选择==</option>
+					{volist name="TrademarkList" id="vo" key="i"}
+					<option value={$vo.ChinaName}>{$vo.ChinaName}</option>
+					{/volist}
+				</select>
+				</span>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">产品等级</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductGrade" name="ProductGrade" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">链接地址</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductLink" name="ProductLink" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">质保期</label>
+			<div class="layui-input-block">
+	        	<input type="text" class="layui-input" value="" placeholder="YYYY-MM-DD" id="ProductQualityDate" name="ProductQualityDate" style="width:50%;">
+	      	</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">净重(g)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductSuttle" name="ProductSuttle" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">毛重(g)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductGross" name="ProductGross" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">包装规格</label>
+			<div class="layui-input-block">
+				<select id="ProductPackType" name="ProductPackType" class="layui-select" style="width:50%;">
+					<option value="">==请选择==</option>
+					<option value="纸盒">纸盒</option>
+					<option value="铁盒">铁盒</option>
+					<option value="其他">其他</option>
+				</select>
+			</span>
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">长(mm)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductLength" name="ProductLength" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">宽(mm)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductWide" name="ProductWide" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">高(mm)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductHigh" name="ProductHigh" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">外箱长(mm)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductPackLenght" name="ProductPackLenght" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">外箱宽(mm)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductPackWide" name="ProductPackWide" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">外箱高(mm)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductPackHigh" name="ProductPackHigh" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">外箱毛重(g)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductPackGross" name="ProductPackGross" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">外箱净重(g)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductPackSuttle" name="ProductPackSuttle" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">申报价值</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductReportMoney" name="ProductReportMoney" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">申报重量(g)</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductReportWeight" name="ProductReportWeight" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">头程运费</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductFreightFrist" name="ProductFreightFrist" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">海关编码</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductHSCode" name="ProductHSCode" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">报关中文名</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductHSNameChina" name="ProductHSNameChina" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">报关英文名</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductHSNameEnglish" name="ProductHSNameEnglish" style="width:50%;">
+			</div>
+		</div>
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">描叙</label>
+			<div class="layui-input-block">
+				<textarea id="ProductDescribe" class="layui-input" name="ProductDescribe" style="width:50%;"></textarea>
+			</div>
+		</div>
+
+		<!-- <div class="layui-form-item">
+            <label class="layui-form-label">产品主图片</label>
+			<div class="layui-input-block">
+				<input type="file" id="xdaTanFileImg" name="up_img" value="" onchange="xmTanUploadImg(this)" accept="image/*"/>小于50KB
+				<img id="xmTanImg"/>
+			</div>
+		</div> -->
+
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">主图片</label>
+			<div class="layui-input-block">
+				<button type="button" class="layui-btn layui-btn-danger" name="up_img" id="upImg"><i class="layui-icon"></i>上传图片限制100KB</button>
+				<img class="layui-upload-img" id="upImgview">
+			</div>
+		</div>
+
+
+		<div class="layui-form-item">
+            <label class="layui-form-label">图片链接</label>
+			<div class="layui-input-block">
+				<input type="text" class="layui-input" value="" placeholder="" id="ProductPhotoLink" name="ProductPhotoLink" style="width:50%;">
+			</div>
+		</div>
+		
+		<div class="layui-form-item">
+		    <div class="layui-input-block">
+		      <button id="submit" style="margin-left: 20%" class="layui-btn" lay-submit="" lay-filter="toSubmit">提交</button>
+		      <button id="reset" type="reset" class="layui-btn layui-btn-primary">重置</button>
+		    </div>
+		</div>
+	</form>
+</div>
+</body>
+
+
+<script type="text/javascript">	
+	var form = null;
+	var layer = null;
+
+	layui.use('form', function(){
+	  form = layui.form;
+	});
+
+	layui.use('layer', function(){
+	  layer = layui.layer;
+	});
+	//自定义验证规则
+	form.verify({
+		username: function(value){
+			if(value.length < 5){
+				return '用户名至少得5个字符啊';
+			}
+		}
+	});
+
+	//监听提交
+	form.on('submit(demo1)', function(data){
+		layer.alert(JSON.stringify(data.field), {
+		title: '最终的提交信息'})
+		return false;
+	});
+
+
+	layui.use('laydate', function(){
+	var laydate = layui.laydate;
+		//常规用法
+		laydate.render({
+			elem: '#ProductQualityDate'
+			,type: 'date'
+			,theme: 'molv'
+			,format: 'yyyy-MM-dd'
+		});
+	});
+
+
+	layui.use('upload', function(){
+		var $ = layui.jquery;
+		var upload = layui.upload;
+		
+		upload.render({
+		elem: '#upImg'
+		,url: '/index.php/admin/Amazon_product/productadd'
+		,auto: false
+		,size: 100 //限制文件大小，单位 KB
+		,accept: 'image'
+    	,exts: 'jpg|png'
+    	,acceptMime: 'image/jpg|image/png'
+		,bindAction: '#submit'
+		,choose: function(obj){
+      		//预读本地文件示例，不支持ie8
+			obj.preview(function(index, file, result){
+			$('#upImgview').attr('src', result); //图片链接（base64）
+			});
+		}
+		,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+		    layer.load(); //上传loading
+		    this.data={
+		    			'ProductType':$("#ProductType").val(),
+		    			'ProductNo':$("#ProductNo").val(),
+		    			'ProductSKU':$("#ProductSKU").val(),
+		    			'ProductName':$("#ProductName").val(),
+		    			'ProductPurchaseTax':$("#ProductPurchaseTax").val(),
+		    			'ProductPurchase':$("#ProductPurchase").val(),
+		    			'ProductStatus':$("#ProductStatus").val(),
+		    			'ProductSellSta':$("#ProductSellSta").val(),
+		    			'ProductTrademark':$("#ProductTrademark").val(),
+		    			'ProductGrade':$("#ProductGrade").val(),
+		    			'ProductLink':$("#ProductLink").val(),
+		    			'ProductQualityDate':$("#ProductQualityDate").val(),
+		    			'ProductSuttle':$("#ProductSuttle").val(),
+		    			'ProductGross':$("#ProductGross").val(),
+		    			'ProductPackType':$("#ProductPackType").val(),
+		    			'ProductLength':$("#ProductLength").val(),
+		    			'ProductWide':$("#ProductWide").val(),
+		    			'ProductHigh':$("#ProductHigh").val(),
+		    			'ProductPackLenght':$("#ProductPackLenght").val(),
+		    			'ProductPackWide':$("#ProductPackWide").val(),
+		    			'ProductPackHigh':$("#ProductPackHigh").val(),
+		    			'ProductPackSuttle':$("#ProductPackSuttle").val(),
+		    			'ProductPackGross':$("#ProductPackGross").val(),
+		    			'ProductReportMoney':$("#ProductReportMoney").val(),
+		    			'ProductReportWeight':$("#ProductReportWeight").val(),
+		    			'ProductFreightFrist':$("#ProductFreightFrist").val(),
+		    			'ProductHSCode':$("#ProductHSCode").val(),
+		    			'ProductHSNameChina':$("#ProductHSNameChina").val(),
+		    			'ProductHSNameEnglish':$("#ProductHSNameEnglish").val(),
+		    			'ProductDescribe':$("#ProductDescribe").val(),
+		    			'ProductPhotoLink':$("#ProductPhotoLink").val(),
+		    		};
+		}
+		,done: function(res, index, upload){
+			layer.closeAll('loading'); //关闭loading
+		}
+		,error: function(){
+			layer.closeAll('loading'); //关闭loading
+		}
+		});
+	});
+
+
+	$(document).ready(function(){
+	     var options = {
+		      type:'post',           //post提交
+		      //url:'http://ask.tongzhuo100.com/server/****.php?='+Math.random(),   //url
+		      dataType:"json",        //json格式
+		      data:{},    //如果需要提交附加参数，视情况添加
+		      clearForm: false,        //成功提交后，清除所有表单元素的值
+		      resetForm: false,        //成功提交后，重置所有表单元素的值
+		      cache:false,          
+		      async:false,          //同步返回
+		      success:function(data){
+		      	console.log(data);
+		      	if(data.code==0){
+		      		// alert(data.msg);
+		      		layer.msg(data.msg,{icon:2,time:2000, anim:6});
+		      	}else{
+		      		layer.msg(data.msg,{icon:1,time:500},function(){
+		      			$("#reset").click();
+		      			x_admin_close();
+		      			parent.location.reload();
+		      		});
+		      	}
+		      //服务器端返回处理逻辑
+		      	},
+		      	error:function(data){
+		      		// alert(data.msg);
+		        	layer.msg(data.msg,{icon:2,time:2000, anim:6});
+		      }
+		    }; 
+	    // bind form using 'ajaxForm' 
+	    $('#mainForm').ajaxForm(options).submit(function(data){
+	    	//无逻辑
+	    }); 
+
+	});
+
+
+	// UE.getEditor('ProductDescribe',{initialFrameWidth:800,initialFrameHeight:400,});
+
+	// layui.use('layedit', function(){
+	// 	var layedit = layui.layedit;
+	// 	layedit.build('ProductDescribe', {height: 200}); //建立编辑器设置编辑器高度
+
+	// });
+
+
+	//判断浏览器是否支持FileReader接口
+	// if (typeof FileReader == 'undefined') {
+	//     document.getElementById("xmTanDiv").InnerHTML = "<h1>当前浏览器不支持FileReader接口</h1>";
+	//     //使选择控件不可操作
+	//     document.getElementById("xdaTanFileImg").setAttribute("disabled", "disabled");
+	// }
+
+	// //选择图片，马上预览
+	// function xmTanUploadImg(obj) {
+	//     var file = obj.files[0];
+	    
+	//     console.log(obj);console.log(file);
+	//     console.log("file.size = " + file.size);  //file.size 单位为byte
+
+	//     var reader = new FileReader();
+
+	//     //读取文件过程方法
+	//     reader.onloadstart = function (e) {
+	//         console.log("开始读取....");
+	//     }
+	//     reader.onprogress = function (e) {
+	//         console.log("正在读取中....");
+	//     }
+	//     reader.onabort = function (e) {
+	//         console.log("中断读取....");
+	//     }
+	//     reader.onerror = function (e) {
+	//         console.log("读取异常....");
+	//     }
+	//     reader.onload = function (e) {
+	//         console.log("成功读取....");
+
+	//         var img = document.getElementById("xmTanImg");
+	//         img.src = e.target.result;
+	//         //或者 img.src = this.result;  //e.target == this
+	//     }
+
+	//     reader.readAsDataURL(file)
+	// }
+
+</script>
+{include file='public/foot'}

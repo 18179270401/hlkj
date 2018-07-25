@@ -1,0 +1,179 @@
+﻿{include file="public/head"}
+<body>
+	<div class="x-body" style="height: 95%"> 
+	    <img src="__static__/images/hl-excel.jpg" style="float:right;margin-left: 5px;  margin-top: 8px;">
+	    <!-- <img src="__static__/images/hl-search2.jpg" style="float:right;margin-left: 5px;  margin-top: 8px;"> -->
+	    <img onclick="javascript:search_button();" src="__static__/images/hl-search.jpg" style="float:right;margin-left: 5px;  margin-top: 8px;">
+	    <select id="ShopName" type="text" name="ShopName" placeholder="选择店铺" class="layui-select" style="float:right;margin-left: 5px; width: 200px;">
+	    	<option value="">请选择店铺</option>
+	    	{volist name="ShopList" id="vo" key="k"}
+	    	<option value={$vo.shopName}>{$vo.shopName}</option>
+	    	{/volist}
+	    </select>
+
+		<table class="layui-table" style="table-layout:fixed;">
+			<thead>
+				<tr>
+					<th width="20"><div class="header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div></th>
+					<th width="60">店铺名</th>
+                    <th width="90">市场ID</th>
+                    <th width="90">店铺ID</th>
+                    <th width="80">停售列表</th>
+                    <th width="160">域名</th>
+                    <th width="160">名字</th>
+                    <th width="60">货币代码</th>
+                    <th width="60">语言代码</th>
+				</tr>
+			</thead>
+			<tbody id="ajax-table">
+				{volist name="SellersData" id="sellersData" key="k"}
+				<tr class="text-c">
+					<td><div class="layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div></td>
+					<td >{$sellersData.ShopName}</td>
+                    <td >{$sellersData.MarketplaceId}</td>
+                    <td >{$sellersData.SellerId}</td>
+                    <td >{$sellersData.HasSellerSuspendedListings}</td>
+                    <td >{$sellersData.DomainName}</td>
+                    <td >{$sellersData.Name}</td>
+                    <td >{$sellersData.DefaultCurrencyCode}</td>
+                    <td >{$sellersData.DefaultLanguageCode}</td>
+					</td>
+				</tr>
+				{/volist}
+			</tbody>
+		</table>
+	</div>
+
+	<div id="sm-box">
+        <div style="display: inline-block;vertical-align:middle;width: 80%;">
+            <div id="hl-page" style="margin-top: 5px; display: inline-block;vertical-align:middle;">{$page.pageList}</div>
+            <img onclick="javascript:location.reload()" src="__static__/images/hl-refresh.jpg" style="margin-left: 5px; display: inline-block;vertical-align:middle;">
+            <select id="hl-display-num" onchange="record_number_change()" style="display: inline-block; width: 80px; height: 1%; margin-left: 10px;">
+            	<option value="5">5</option>
+                <option value="10">10</option>
+                <option value="30" {if condition="$listRows eq 30"} selected="selected" {/if}>30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="300">300</option>
+            </select>
+        </div><div id="record_detail" style="display: inline-block;vertical-align:middle;text-align: right; width: 20%;"> 共 {$page.totalRows} 条， 共 {$page.totalPages} 页</div>
+    </div>
+
+</body>
+
+<script type="text/javascript">
+
+//查询亚马逊订单信息
+    function search_button(){
+        var listRows = $("#hl-display-num").val(); //一页显示记录条数
+        var ShopName = $("#ShopName").val(); //当前页数
+        if(ShopName == undefined ){
+            return;
+        }
+        //参数列表
+        var param = {ShopName:ShopName, listRows:listRows};
+        $.post("{:url('SearchSellerMessage')}", param, function(data, status){
+            var html = '';
+    	    $.each(data.SellersData, function (key, value){
+            html += '<tr>' +
+                    '<td><div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                    '<td>' + data.SellersData[key].ShopName + '</td>' +
+                    '<td>' + data.SellersData[key].MarketplaceId + '</td>' +
+                    '<td>' + data.SellersData[key].SellerId + '</td>' +
+                    '<td>' + data.SellersData[key].HasSellerSuspendedListings + '</td>' +
+                    '<td>' + data.SellersData[key].DomainName + '</td>' +
+                    '<td>' + data.SellersData[key].Name + '</td>' +
+                    '<td>' + data.SellersData[key].DefaultCurrencyCode + '</td>' +
+                    '<td>' + data.SellersData[key].DefaultLanguageCode + '</td>' +
+                '</tr>';
+            });
+            var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+            $("#ajax-table").html(html);
+            $("#hl-page").html(data.page.pageList);
+            $("#record_detail").html(record);
+        }, 'json');
+    }
+
+
+    //改变显示记录条数
+    function record_number_change(){
+        var listRows = $("#hl-display-num").val(); //一页显示记录条数
+        var ShopName = $("#ShopName").val(); //当前页数
+        var StartTime = $("#QueryStartTime").val(); 
+        var EndTime = $("#QueryEndTime").val(); 
+        //参数列表
+        var param = {ShopName:ShopName, listRows:listRows};
+
+        $.post("{:url('getDisplayPage')}", param, function(data, status){
+            var html = '';
+            $.each(data.FinancialData, function (key, value) {
+                html += '<tr><td>' +
+                        '<div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                        '<td>' + data.SellersData[key].ShopName + '</td>' +
+                        '<td>' + data.SellersData[key].MarketplaceId + '</td>' +
+	                    '<td>' + data.SellersData[key].SellerId + '</td>' +
+	                    '<td>' + data.SellersData[key].HasSellerSuspendedListings + '</td>' +
+	                    '<td>' + data.SellersData[key].DomainName + '</td>' +
+	                    '<td>' + data.SellersData[key].Name + '</td>' +
+	                    '<td>' + data.SellersData[key].DefaultCurrencyCode + '</td>' +
+	                    '<td>' + data.SellersData[key].DefaultLanguageCode + '</td>' +
+                    '</tr>';
+             });
+            var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+            $("#ajax-table").html(html);
+            $("#hl-page").html(data.page.pageList);
+            $("#record_detail").html(record);
+            
+        },'json');
+
+        //修改一页显示的记录条数
+        var myArray=new Array()
+        myArray[5] = '<option value="5">5</option>';
+        myArray[10] = '<option value="10">10</option>';
+        myArray[30] = '<option value="30">30</option>';
+        myArray[50] = '<option value="50">50</option>';
+        myArray[100] = '<option value="100">100</option>';
+        myArray[300] = '<option value="300">300</option>';
+
+        myArray[listRows] = '<option value="' + listRows + '" selected>' + listRows + '</option>';
+        var html = myArray[5] + myArray[10] + myArray[30] + myArray[50] + myArray[100] + myArray[300];
+
+        $("#hl-display-num").html(html);
+    }
+
+
+    //分页搜索结果，AJAX异步返回结果
+    function page_show(p){ //user函数名 一定要和action中的第三个参数一致上面有
+        var p = p; //当前页数
+        var listRows = $("#hl-display-num").val(); //一页显示记录条数
+        var ShopName = $("#ShopName").val(); //当前页数
+        var StartTime = $("#QueryStartTime").val(); 
+        var EndTime = $("#QueryEndTime").val(); 
+
+        //参数列表
+        var param = {ShopName:ShopName, StartTime:StartTime, EndTime:EndTime, listRows:listRows, p:p};
+        $.get("{:url('getDisplayPage')}", param, function(data, status){ //用get方法发送信息到UserAction中的user方法
+            var html = '';
+            $.each(data.FinancialData, function (key, value) {
+               	html += '<tr><td>' +
+                        '<div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                        '<td>' + data.SellersData[key].ShopName + '</td>' +
+                        '<td>' + data.SellersData[key].MarketplaceId + '</td>' +
+	                    '<td>' + data.SellersData[key].SellerId + '</td>' +
+	                    '<td>' + data.SellersData[key].HasSellerSuspendedListings + '</td>' +
+	                    '<td>' + data.SellersData[key].DomainName + '</td>' +
+	                    '<td>' + data.SellersData[key].Name + '</td>' +
+	                    '<td>' + data.SellersData[key].DefaultCurrencyCode + '</td>' +
+	                    '<td>' + data.SellersData[key].DefaultLanguageCode + '</td>' +
+                    '</tr>';
+             });
+            var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+            $("#ajax-table").html(html);
+            $("#hl-page").html(data.page.pageList);
+            $("#record_detail").html(record);
+            
+        }, 'json');
+    }
+
+</script> 
+{include file="public/foot"}

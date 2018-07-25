@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>泓亮科技</title>
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="shortcut icon" href="__static__/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="__static__/css/font.css">
+    <link rel="stylesheet" href="__module__/layui/css/layui.css">
+    <link rel="stylesheet" href="__static__/css/xadmin.css">
+    <script type="text/javascript" src="__js__/jquery-1.9.1/jquery.min.js"></script>
+    <script src="__module__/layui/layui.all.js" charset="utf-8"></script>
+    <script type="text/javascript" src="__static__/js/xadmin.js"></script>
+    <script type="text/javascript" src="__static__/js/jquery.form.js"></script>
+
+
+    <!-- 引入bootstrap -->
+    <link rel="stylesheet" href="__module__/bootstrap-3.3.7/css/bootstrap.css">
+    <script type="text/javascript" src="__module__/bootstrap-3.3.7/js/bootstrap.js"></script>
+
+</head>
+<body style="height: 100%">
+<div class="x-body" style="height: 100%"> 
+	<div id="search-condition">
+		
+	    <form class="layui-form" action="" onclick ="return false;">		  
+		  	<div class="layui-form-item" style="margin-bottom: 0;">
+<!-- 				<div class="layui-inline">
+					<label class="layui-form-label" style="width: 60px;">店铺</label>
+			      	<div class="layui-input-inline" style="width: 100px;">
+				        <select id="shop-name" name="shop-name" >
+				          	<option value="">请选择</option>
+				        	<option value="IE">IE</option>
+					        <option value="MK">MK</option>
+				        </select>
+			      	</div>
+			    </div> -->
+
+<!-- 			    <div class="layui-inline">
+					<label class="layui-form-label" style="width: 60px;">状态</label>
+			      	<div class="layui-input-inline" style="width: 100px;">
+				        <select id="order-status" name="order-status">
+				          	<option value="">All</option>
+				        	<option value="Pending">Pending</option>
+					        <option value="Shipped">Shipped</option>
+					        <option value="Canceled">Canceled</option> 
+				        </select>
+			      	</div>
+			    </div> -->
+
+			    <div class="layui-inline">
+					<label class="layui-form-label">开始时间</label>
+					<div class="layui-input-inline">
+						<input class="layui-input" id="startTime" name="startTime" placeholder="yyyy-MM-dd" type="text">
+					</div>
+				</div>
+
+				<div class="layui-inline">
+					<label class="layui-form-label">结束时间</label>
+					<div class="layui-input-inline">
+						<input class="layui-input" id="endTime" name="endTime" placeholder="yyyy-MM-dd" type="text">
+					</div>
+				</div>
+
+<!-- 				<div class="layui-inline">
+					<label class="layui-form-label"></label>
+			      	<div class="layui-input-inline">
+				        <select id="mutile-condition">
+				          	<option value="amazon_order_id">Order ID</option>
+				        	<option value="asin">ASIN</option>
+					        <option value="sku">SKU</option>
+				        </select>
+			      	</div>
+			    </div> -->
+
+			    <div class="layui-inline">
+			        <label class="layui-form-label">SKU</label>
+			        <div class="layui-input-inline">
+			            <input id="product-sku" name="product-sku" class="layui-input" type="text" placeholder="关键字……">
+			        </div>
+			    </div>
+
+			    <div class="layui-inline x-right">
+		  			<button onclick="javascript:search_button();" class="layui-btn layui-btn-small">查询</button>
+		  			<button onclick="javascript:location.reload()" class="layui-btn layui-btn-small">刷新</button>
+			    </div>
+
+
+	    	</div>
+		</form>
+	</div>
+		
+    <div id="hl-order-div" class="" style="overflow: auto; width: 100%; height: 90%;"> 
+    <table class="layui-table" style="table-layout:fixed;">
+        <thead id="ajax-table-head">
+          <tr>
+            <th width="40"><div class="header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div></th>
+            <th width="150">SKU</th>
+            <th width="180">产品名称</th>
+            <th width="180">产品销量</th>
+            <th width="150">销售金额</th>
+            {volist name="every_day" id="vo"}
+            <th width="150">{$vo.date}(qty)</th>
+            <th width="150">{$vo.date}(amt)</th>
+            {/volist}
+        </tr>
+        </thead>
+        <tbody id="ajax-table-body">
+        {volist name="list" id="vo"}
+        	<tr onclick="search_order_item(this)">
+	            <td>
+	              <div class="layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
+	            </td>
+	            <td>{$vo.sku}</td>
+	            <td>{$vo.title}</td>
+                <td>{$vo.total_count}</td>
+	            <td>{$vo.total_amount}</td>
+                {volist name="vo.every_day" id="a"}
+                <td>{$a.total_count}</td>
+                <td>{$a.total_amount}</td>
+                {/volist}
+	        </tr>
+        {/volist}
+        </tbody>
+    </table>
+    </div>
+    <div id="sm-box">
+        <div id="record_detail" style="margin-top: 10px; display: inline-block;vertical-align:middle;"> 共 {$page.totalRows} 条， 共 {$page.totalPages} 页</div>
+        <div id="hl-page" class="x-right" style="margin-top: 5px; display: inline-block;vertical-align:middle;">{$page.pageList}</div>
+    </div>
+</div>
+<div id="" style="display: none;">
+    <input id="hl-param-data" type="text" name="time_type" value=""  >
+</div>
+</body>
+<script src="__module__/layui/layui.all.js" charset="utf-8"></script>
+</html>
+
+<script type="text/javascript">
+
+layui.use('laydate', function(){
+	var laydate = layui.laydate;
+  
+	//执行一个laydate实例
+	laydate.render({
+		elem: '#startTime', //指定元素
+		type: 'date'
+	});
+
+	//执行一个laydate实例
+	laydate.render({
+		elem: '#endTime', //指定元素
+		type: 'date'
+	});
+});
+
+$(document).ready(function() {
+    //后续点击事件监听函数
+});
+
+
+
+//索搜-查询亚马逊订单信息
+function search_button(){
+    var sku = $('#product-sku').val(); //各种搜索条件关键字
+    var startTime = $('#startTime').val();
+    var endTime = $('#endTime').val();
+
+    //参数列表
+    var param = {sku:sku, startTime:startTime,endTime:endTime};
+    $.post("{:url('search_product')}", param, function(data, status){
+
+        //AJAX 拼装table表格头部th
+        var html_head = '<tr><th width="40"><div class="header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div></th>' +
+            '<th width="150">SKU</th>' +
+            '<th width="180">产品名称</th>' +
+            '<th width="180">产品销量</th>' +
+            '<th width="150">销售金额</th>';
+        $.each(data.every_day, function(key, value){
+            html_head += '<th width="150">' + data.every_day[key].date + '(qty)</th>' +
+            '<th width="150">' + data.every_day[key].date + '(amt)</th>';
+        });
+        html_head += '</tr>';
+
+        //AJAX 拼装table表格体部
+        var html_body = '';
+        $.each(data.list, function (key, value) {
+            var html2 = '';
+            html_body += '<tr onclick="search_order_item(this)">' +
+                '<td><div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                '<td>' + data.list[key].sku + '</td>' +
+                '<td>' + data.list[key].title + '</td>' +
+                '<td>' + data.list[key].total_count + '</td>' +
+                '<td>' + data.list[key].total_amount + '</td>' +
+                $.each(data.list[key].every_day, function(k, val){
+                    // alert(data.list[key].every_day[k].total_count);
+                   html2 += '<td>' + data.list[key].every_day[k].total_count + '</td>' +
+                    '<td>' + data.list[key].every_day[k].total_amount + '</td>';
+                });
+
+                html2 += '</tr>';
+                html_body += html2;
+        });
+
+        //JS替换AJAX异步请求返回来的字符串
+        var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+        $("#ajax-table-head").html(html_head);
+        $("#ajax-table-body").html(html_body);
+        $("#hl-page").html(data.page.pageList);
+        // $("#record_detail").html(record);
+    }, 'json');
+}
+
+
+//tr点击事件,改变背景颜色
+function search_order_item(obj){
+    $(obj).css('background-color','#E2E2E2').siblings().css('background-color','white');
+}
+  
+
+//分页搜索结果，AJAX异步返回结果
+function page_show(p){ //user函数名 一定要和action中的第三个参数一致上面有
+    var p = p;
+    var sku = $('#product-sku').val(); //各种搜索条件关键字
+    var startTime = $('#startTime').val();
+    var endTime = $('#endTime').val();
+
+    //参数列表
+    var param = {p:p, sku:sku, startTime:startTime,endTime:endTime};
+    $.post("{:url('search_product')}", param, function(data, status){
+
+        //AJAX 拼装table表格头部th
+        var html_head = '<tr><th width="40"><div class="header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div></th>' +
+            '<th width="150">SKU</th>' +
+            '<th width="180">产品名称</th>' +
+            '<th width="180">产品销量</th>' +
+            '<th width="150">销售金额</th>';
+        $.each(data.every_day, function(key, value){
+            html_head += '<th width="150">' + data.every_day[key].date + '(qty)</th>' +
+            '<th width="150">' + data.every_day[key].date + '(amt)</th>';
+        });
+        html_head += '</tr>';
+
+        //AJAX 拼装table表格体部
+        var html_body = '';
+        $.each(data.list, function (key, value) {
+            var html2 = '';
+            html_body += '<tr onclick="search_order_item(this)">' +
+                '<td><div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                '<td>' + data.list[key].sku + '</td>' +
+                '<td>' + data.list[key].title + '</td>' +
+                '<td>' + data.list[key].total_count + '</td>' +
+                '<td>' + data.list[key].total_amount + '</td>' +
+                $.each(data.list[key].every_day, function(k, val){
+                    // alert(data.list[key].every_day[k].total_count);
+                   html2 += '<td>' + data.list[key].every_day[k].total_count + '</td>' +
+                    '<td>' + data.list[key].every_day[k].total_amount + '</td>';
+                });
+
+                html2 += '</tr>';
+                html_body += html2;
+        });
+
+        //JS替换AJAX异步请求返回来的字符串
+        var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+        $("#ajax-table-head").html(html_head);
+        $("#ajax-table-body").html(html_body);
+        $("#hl-page").html(data.page.pageList);
+        // $("#record_detail").html(record);
+    }, 'json');
+}
+
+
+//改变显示记录条数
+function record_number_change(){
+    var listRows = $("#hl-display-num").val(); //一页显示记录条数
+    var high_grade_param = $('#hl-param-data').val();
+
+    //参数列表
+    var param = {listRows:listRows, high_grade_param:high_grade_param}; 
+    $.post("{:url('search_product')}", param, function(data, status){ //用get方法发送信息到UserAction中的user方法
+        var html = '';
+
+        $.each(data.orderList, function (key, value) {
+            // alert(data.orderList[key].order_status);
+            html += '<tr onclick="search_order_item(this)"><td>' +
+                        '<div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div>' +
+                        '</td><td>' + data.orderList[key].order_status + '</td>' +
+                        '<td>' + data.orderList[key].purchase_date + '</td>' +
+                        '<td>' + data.orderList[key].amazon_order_id + '</td>' +
+                        '<td>' + data.orderList[key].merchant_order_id + '</td>' +
+                        '<td>' + data.orderList[key].shop_name + '</td>' +
+                        '<td>' + data.orderList[key].amazon_mall + '</td>' +
+                        '<td>' + data.orderList[key].fulfillment_channel + '</td>' +
+                        '<td>' + data.orderList[key].amount + '</td>' +
+                        '<td>' + data.orderList[key].currency + '</td>' +
+                        '<td>' + data.orderList[key].buyer_name + '</td>' +
+                        '<td>' + data.orderList[key].buyer_email + '</td>' +
+                        '<td><button class="layui-btn layui-btn-mini" onclick="x_admin_show("编辑用户","edit.html?id=12",500,410)">编辑</button>' +
+                        '<button onclick="delUser()" class="layui-btn layui-btn-mini layui-btn-danger">删除</button></td>' +
+                    '</tr>';
+         });
+
+        var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+        $("#ajax-table").html(html);
+        $("#hl-page").html(data.page.pageList);
+        $("#record_detail").html(record);
+
+
+        //修改一页显示的记录条数
+        var myArray=new Array()
+        myArray[10] = '<option value="10">10</option>';
+        myArray[30] = '<option value="30">30</option>';
+        myArray[50] = '<option value="50">50</option>';
+        myArray[100] = '<option value="100">100</option>';
+        myArray[500] = '<option value="500">500</option>';
+        myArray[listRows] = '<option value="' + listRows + '" selected>' + listRows + '</option>';
+        var html = myArray[10] + myArray[30] + myArray[50] + myArray[100] + myArray[500];
+        $("#hl-display-num").html(html);
+    }, 'json');
+}
+
+
+
+//导出excel表格
+function export_excel(){
+    // var shop_name = $('#select-shop-name').val();
+    var orderno = $("#amazon_orderno").val(); //当前页数
+    var high_grade_param = $('#hl-param-data').val();
+
+    var url = "/index.php/admin/Amazon_order/export_excel" + '?orderno=' + orderno + '&high_grade_param=' + high_grade_param;
+    // var url = "/index.php/admin/Amazon_order/export_excel";
+    window.location.href = url;
+
+
+}
+
+
+layui.use(['laydate','form'], function(){
+    var laydate = layui.laydate;
+    //执行一个laydate实例
+    laydate.render({
+      elem: '#start' //指定元素
+    });
+    //执行一个laydate实例
+    laydate.render({
+      elem: '#end' //指定元素
+    });
+});
+
+
+
+
+
+
+
+
+
+</script>

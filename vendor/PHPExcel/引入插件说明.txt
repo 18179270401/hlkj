@@ -1,0 +1,2 @@
+1. 将  PHPExcel目录  和  PHPExcel.php  文件放入对应的位置。
+2. 参照demo.php 案例代码， 导出 和 读取 excel 表格。

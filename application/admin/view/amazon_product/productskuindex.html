@@ -1,0 +1,317 @@
+﻿{include file="public/head"}
+<body>
+	<div class="x-body" style="height: 95%"> 
+	    <button class="layui-btn  layui-btn-small layui-btn-danger" onclick="delAll()">批量删除</button>
+        <button class="layui-btn layui-btn-small " 
+        onclick="x_admin_show('添加产品SKU','ShowProductSkuAdd.html',500,410)"></i>添加SKU</button>
+        <button onclick="javascript:location.reload()" class="layui-btn layui-btn-small">刷新</button>
+
+	    <img src="__static__/images/hl-excel.jpg" style="float:right;margin-left: 5px;">
+	    <img src="__static__/images/hl-search2.jpg" style="float:right;margin-left: 5px;">
+	    <img onclick="javascript:search_button();" src="__static__/images/hl-search.jpg" style="float:right;margin-left: 5px;">
+	    <input id="ProductSku" type="text" name="ProductSku" placeholder="输入SKU……" style="float:right;margin-left: 5px; width: 200px;">
+		
+		<div class="mt-20" style="overflow: auto; width: 100%;">
+			<table class="layui-table" style="table-layout:fixed;">
+				<thead>
+					<tr>
+						<th width="40"><div class="header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div></th>
+						<th width="200">内部SKU</th>
+						<th width="200">外部SKU</th>
+                        <th width="200">中文名称</th>
+                        <th width="200">英文名称</th>
+						<th width="200">平台账号</th>
+						<th width="200">操作</th>
+					</tr>
+				</thead>
+				<tbody id="ajax-table">
+					{volist name="ProductSkuList" id="vo" key="k"}
+					<tr>
+						<td><div class="layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div></td>
+						<td>{$vo.InnerSKU}</td>
+						<td>{$vo.OuterSKU}</td>
+                        <td>{$vo.cname}</td>
+                        <td>{$vo.ename}</td>
+						<td>{$vo.PlatformAccount}</td>
+						<td><button class="layui-btn layui-btn-mini" onclick="x_admin_show('编辑产品','productskuedit.html?id={$vo.id}',500,410)">编辑</button>
+    	            	<button onclick="DelProductSku(this, {$vo.id})" class="layui-btn layui-btn-mini layui-btn-danger">删除</button></td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+		</div>
+
+		<div id="sm-box">
+        <div style="display: inline-block;vertical-align:middle;width: 80%;">
+            <div id="hl-page" style="margin-top: 5px; display: inline-block;vertical-align:middle;">{$page.pageList}</div>
+            <img onclick="javascript:location.reload()" src="__static__/images/hl-refresh.jpg" style="margin-left: 5px; display: inline-block;vertical-align:middle;">
+            <select id="hl-display-num" onchange="record_number_change()" style="display: inline-block; width: 80px; height: 1%; margin-left: 10px;">
+            	<option value="1">1</option>
+                <option value="10" {if condition="$listRows eq 10"} selected="selected" {/if}>10</option>
+                <option value="30" {if condition="$listRows eq 30"} selected="selected" {/if}>30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="300">300</option>
+            </select>
+        </div><div id="record_detail" style="display: inline-block;vertical-align:middle;text-align: right;width: 20%;"> 共 {$page.totalRows} 条， 共 {$page.totalPages} 页</div>
+        </div>
+
+		<div id="hl-tab" style="width:100%; height: 30%; ">
+        	<div id="hl-div-down" style="height: 30px; background-color: #01aaed;"><img id="hl-img-down" src="__static__/images/tab-down.png" style="margin-right: 5px;margin-top: 5px;float: right;"></div>
+        	<div id="hl-div-up" style="height: 30px; background-color: #01aaed; display: none;"><img id="hl-img-up" src="__static__/images/tab-up.png" style="margin-right: 5px;margin-top: 5px;float: right;"></div>
+
+		    <div class="layui-tab">
+	            <ul class="layui-tab-title">
+	                <li class="layui-this">产品信息</li>
+	                <li>客户信息</li>
+	                <li>费用明细</li>
+	                <li>备注</li>
+	                <li>操作日志</li>
+	            </ul>
+	            <div class="layui-tab-content" style="padding: 0;">
+	                <div class="layui-tab-item layui-show">
+	                    <table class="layui-table" style="">
+	                        <thead>
+	                          <tr>
+	                            <th width="">产品编码</th>
+	                            <th width="">包装类别</th>
+	                        </thead>
+	                        <tbody id="hl-item-tbody"></tbody>
+	                    </table>
+	                </div>
+	                <div class="layui-tab-item">内容2</div>
+	                <div class="layui-tab-item">内容3</div>
+	                <div class="layui-tab-item">内容4</div>
+	                <div class="layui-tab-item">内容5</div>
+	            </div>
+        </div>
+
+	</div>
+</body>
+<script type="text/javascript">
+
+$(document).ready(function() {
+    //显示 与 隐藏订单商品信息div显示框
+    $('#hl-img-down').click(function(){
+        $('#hl-tab').css("height", "30px");
+        $('#hl-product-div').css("height", "96%");
+        $('.layui-tab').css("display", "none");
+        $('#hl-div-down').css("display", "none");
+        $('#hl-div-up').css("display", "block");
+    });
+
+    $('#hl-div-up').click(function(){
+        $('#hl-tab').css("height", "30%");
+        $('#hl-product-div').css("height", "60%");
+        $('.layui-tab').css("display", "block");
+        $('#hl-div-down').css("display", "block");
+        $('#hl-div-up').css("display", "none");
+    });
+
+    //后续点击事件监听函数
+});
+
+
+//tr点击事件
+function search_productsku_item(obj){
+    $(obj).css('background-color','#E2E2E2').siblings().css('background-color','white');
+    var ProductSku = $(obj).find("td:eq(1)").html()  //定义val值为点击的此td的id值；
+
+    //参数列表
+    var param = {ProductSku:ProductSku};
+    $.get("{:url('getProductSkuDetail')}", param, function(data, status){ //获取订单商品信息
+        var html = '';
+        if(data != null){
+            html += '<tr>' +
+                    '<td>' + data.ProductNo + '</td>' +
+                    '<td>' + data.ProductPackType + '</td>' +
+                '</tr>';
+        }
+
+        $("#hl-item-tbody").html(html);
+    }, 'json');
+}
+  
+
+//查询按钮点击函数
+function search_button(){
+    var sku = $("#ProductSku").val(); //当前页数
+    alert(sku);
+    if(sku == undefined ){
+        return;
+    }
+
+    //参数列表
+    var param = {sku:sku};
+    $.post("{:url('searchProductSku')}", param, function(data, status){
+        var html = '';
+        // alert(data.list[0].cname);
+        $.each(data.list, function(key, value){
+            alert(value.cname);
+            html += '<tr>' +
+                    '<td><div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                    '<td>' + value.InnerSKU + '</td>' +
+                    '<td>' + value.OuterSKU + '</td>' +
+                    '<td>' + value.cname + '</td>' +
+                    '<td>' + value.ename + '</td>' +
+                    '<td>' + value.PlatformAccount + '</td>' +
+                    "<td><button class=\"layui-btn layui-btn-mini\" onclick=\"x_admin_show('编辑用户','productskuedit.html?id=" + data.id + "',500,410)\">编辑</button>" +
+                    '<button onclick="DelProductSku(this,' + data.id + ')" class="layui-btn layui-btn-mini layui-btn-danger">删除</button></td>' +
+                '</tr>';
+        });
+        
+        $("#ajax-table").html(html);
+    }, 'json');
+}
+
+
+//分页搜索结果，AJAX异步返回结果
+function page_show(p){ //user函数名 一定要和action中的第三个参数一致上面有
+    var p = p; //当前页数
+    var listRows = $("#hl-display-num").val(); //一页显示记录条数
+
+    //参数列表
+    var param = {listRows:listRows, p:p};
+    $.get("{:url('getPageProductSku')}", param, function(data, status){ //用get方法发送信息到UserAction中的user方法
+        var html = '';
+        $.each(data.ProductSkuList, function (key, value) {
+            html += '<tr>' +
+                        '<td><div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                        '<td>' + value.InnerSKU + '</td>' +
+	                    '<td>' + value.OuterSKU + '</td>' +
+                        '<td>' + value.cname + '</td>' +
+                        '<td>' + value.ename + '</td>' +
+	                    '<td>' + value.PlatformAccount + '</td>' +
+                        "<td><button class=\"layui-btn layui-btn-mini\" onclick=\"x_admin_show('编辑用户','productskuedit.html?id=" + value.id + "',500,410)\">编辑</button>" +
+                        '<button onclick="DelProductSku(this,' + value.id + ')" class="layui-btn layui-btn-mini layui-btn-danger">删除</button></td>' +
+                    '</tr>';
+         });
+        var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+        $("#ajax-table").html(html);
+        $("#hl-page").html(data.page.pageList);
+        $("#record_detail").html(record);
+        
+    }, 'json');
+}
+
+
+//导出excel表格
+function export_excel(){
+    var shop_name = $('#select-shop-name').val();
+    var startDate = $('#hl-date-min').val();
+    var endDate = $('#hl-date-max').val();
+
+    var url = "/index.php/admin/Amazon_order/export_excel" + '?startDate=' + startDate + '&endDate=' + endDate  + '&shop_name=' + shop_name;
+    window.location.href = url;
+
+    //参数列表
+    var param = {startDate:startDate, endDate:endDate};
+}
+
+//改变显示记录条数
+function record_number_change(){
+    var listRows = $("#hl-display-num").val(); //一页显示记录条数
+    //参数列表
+    var param = {listRows:listRows}; 
+
+    $.post("{:url('getPageProductSku')}", param, function(data, status){
+            var html = '';
+            $.each(data.ProductSkuList, function (key, value) {
+                html += '<tr>' +
+                        '<td><div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                        '<td>' + value.InnerSKU + '</td>' +
+	                    '<td>' + value.OuterSKU + '</td>' +
+                        '<td>' + value.cname + '</td>' +
+                        '<td>' + value.ename + '</td>' +
+	                    '<td>' + value.PlatformAccount + '</td>' +
+                        "<td><button class=\"layui-btn layui-btn-mini\" onclick=\"x_admin_show('编辑用户','productskuedit.html?id=" + value.id + "',500,410)\">编辑</button>" +
+                        '<button onclick="DelProductSku(this,' + value.id + ')" class="layui-btn layui-btn-mini layui-btn-danger">删除</button></td>' +
+                    '</tr>';
+             });
+            var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+            $("#ajax-table").html(html);
+            $("#hl-page").html(data.page.pageList);
+            $("#record_detail").html(record);
+            
+        },'json');
+
+    //修改一页显示的记录条数
+    var myArray=new Array()
+    myArray[1] = '<option value="1">1</option>';
+    myArray[10] = '<option value="10">10</option>';
+    myArray[30] = '<option value="30">30</option>';
+    myArray[50] = '<option value="50">50</option>';
+    myArray[100] = '<option value="100">100</option>';
+    myArray[300] = '<option value="300">300</option>';
+
+    myArray[listRows] = '<option value="' + listRows + '" selected>' + listRows + '</option>';
+
+    var html = myArray[1] + myArray[10] + myArray[30] + myArray[50] + myArray[100] + myArray[300];
+
+    $("#hl-display-num").html(html);
+}
+
+
+layui.use(['laydate','form'], function(){
+	var laydate = layui.laydate;
+	//执行一个laydate实例
+	laydate.render({
+	   elem: '#start' //指定元素
+	});
+	//执行一个laydate实例
+	laydate.render({
+	   elem: '#end' //指定元素
+	});
+});
+
+
+/*用户-停用*/
+function member_stop(obj,id){
+    layer.confirm('确认要停用吗？',function(index){
+        if($(obj).attr('title')=='启用'){
+        //发异步把用户状态进行更改
+        $(obj).attr('title','停用')
+        $(obj).find('i').html('&#xe62f;');
+
+        $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+        layer.msg('已停用!',{icon: 5,time:1000});
+
+        }else{
+        $(obj).attr('title','启用')
+        $(obj).find('i').html('&#xe601;');
+
+        $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+        layer.msg('已启用!',{icon: 5,time:1000});
+        }
+    });
+}
+
+
+function delAll (argument) {
+    var data = tableCheck.getData();
+    layer.confirm('确认要全部删除吗？',function(index){
+        //捉到所有被选中的，发异步进行删除
+        layer.msg('删除成功', {icon: 1});
+        $(".layui-form-checked").not('.header').parents('tr').remove();
+    });
+}
+
+function DelProductSku(obj,id){
+    layer.confirm('确认要删除吗？',function(index){
+        //捉到所有被选中的，发异步进行删除
+        $.post("{:url('admin/AmazonProduct/DeleteProductSku')}", {id: id}, function(data, textStatus, xhr){
+            /*optional stuff to do after success */
+            console.log(data);
+            if(data.code==1){
+                layer.msg(data.msg,{icon:1,time:1000},function(){
+                // $(obj).parents('tr').remove();
+                location.reload();
+                });
+            }else{
+                layer.msg(data.msg,{icon:2,time:1000});
+            }
+        });
+    });
+}
+</script> 
+{include file='public/foot'}

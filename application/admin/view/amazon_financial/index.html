@@ -1,0 +1,380 @@
+﻿{include file="public/head"}
+<body>
+	<div class="x-body" style="height: 95%">
+        <button class="layui-btn  layui-btn-small" data-title="更新汇率" onclick="UpdateExchangeRate()" style="float:left; margin-left: 5px; height: 38px; width: 200px;">更新汇率</button>
+		<select id="ToMoney" type="text" name="" placeholder="选择货币" style="float:left; margin-left: 5px; height: 38px; width: 200px;">
+			<option value="" selected="selected">请选择货币</option>
+            {volist name="CurrencyCode" id="vo" key="k"}
+            <option value={$vo.CurrencyCode}>{$vo.CurrencyName . '(' . $vo.CurrencyCode . ')'}</option>
+            {/volist}
+        </select>
+		<button class="layui-btn  layui-btn-small" data-title="查看汇率" onclick="GetExchangeRate()" style="float:left; margin-left: 5px; height: 38px; width: 200px;">查看汇率</button>
+        <input type="text" class="layui-input"  placeholder="汇率..." id="ViewRate" name="" readonly style="float:left; margin-left: 5px; height: 38px; width: 200px;">
+
+		<img src="__static__/images/hl-excel.jpg" style="float:right;margin-left: 5px;  margin-top: 8px;">
+	    <!-- <img src="__static__/images/hl-search2.jpg" style="float:right;margin-left: 5px;  margin-top: 8px;"> -->
+	    <!-- <img onclick="javascript:search_button();" src="__static__/images/hl-search.jpg" style="float:right;margin-left: 5px;  margin-top: 8px;"> -->
+	    <!-- <select id="ShopName" type="text" name="ShopName" placeholder="选择店铺" class="layui-select" style="float:right;margin-left: 5px; width: 200px;">
+	    	<option value="">请选择店铺</option>
+	    	{volist name="ShopList" id="vo" key="k"}
+	    	<option value={$vo.shopName}>{$vo.shopName}</option>
+	    	{/volist}
+	    </select> -->
+	    <input type="text" class="layui-input" value="" placeholder="结束日期" id="QueryEndTime" name="QueryEndTime" style="float:right;margin-left: 5px; width: 200px;">
+	    <input type="text" class="layui-input" value="" placeholder="开始日期" id="QueryStartTime" name="QueryStartTime" style="float:right;margin-left: 5px; width: 200px;">
+
+		<!-- <table class="table table-border table-bordered table-bg table-hover  table-responsive"> -->
+		<table class="layui-table" style="table-layout:fixed;">
+			<thead>
+				<tr>
+					<th width="40"><div class="header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div></th>
+					<th width="120">店铺名称
+                        <div style="height: 20px; width: 100px;">
+                            <i class="layui-icon" id="SelectShop">&#xe625;</i>
+                            <select id="ShopName" type="text" name="ShopName" class="layui-select" onchange="ShopNameSlecetChange()" style="z-index: inherit; position: absolute; display:none; top:-5px; background-color: rgb(1, 170, 237);">
+                            <option value="" style="background-color: orange" selected="selected">请选择店铺</option>
+                            <option value="All">所有店铺</option>
+                            {volist name="ShopList" id="vo" key="k"}
+                            <option value={$vo.shopName}>{$vo.shopName}</option>
+                            {/volist}
+                            </select>
+                        </div>
+                    </th>
+                    <th width="100">商城标识</th>
+                    <th width="100">期初金额</th>
+                    <th width="100">货币类型</th>
+                    <th width="100">CNY金额</th>
+                    <th width="100">期末余额</th>
+                    <th width="100">货币类型</th>
+                    <th width="100">CNY金额</th>
+                    <th width="120">平台处理状态
+                        <div style="height: 20px; width: 100px;">
+                            <i class="layui-icon" id="SelectProcessingStatus">&#xe625;</i>
+                            <select id="ProcessingStatus" type="text" name="ProcessingStatus" class="layui-select" onchange="ProcessingStatusSlecetChange()" style="z-index: inherit; position: absolute; top:-5px; display:none; background-color: rgb(1, 170, 237);">
+                            <option value="" style="background-color: orange">请选择状态</option>
+                            <option value="All" selected="selected">所有状态</option>
+                            {volist name="FinancialStatus" id="vo" key="k"}
+                            <option value={$vo.ProcessingStatus}>{$vo.ProcessingStatus}</option>
+                            {/volist}
+                            </select>
+                        </div>
+                    </th>
+                    <th width="100">转账状态
+                        <div style="height: 20px; width: 100px;">
+                            <i class="layui-icon" id="SelectFundTransferStatus">&#xe625;</i>
+                            <select id="FundTransferStatus" type="text" name="FundTransferStatus" class="layui-select" onchange="FundTransferStatusSlecetChange()" style="z-index: inherit; position: absolute; top:-5px; display:none; background-color: rgb(1, 170, 237);">
+                            <option value="" style="background-color: orange">请选择状态</option>
+                            <option value="All" selected = "selected">所有状态</option>
+                            {volist name="FinancialFundStatus" id="vo" key="k"}
+                            <option value={$vo.FundTransferStatus}>{$vo.FundTransferStatus}</option>
+                            {/volist}
+                            </select>
+                        </div>
+                    </th>
+                    <th width=150">转账日期</th>
+                    <th width="150">本期开始时间</th>
+                    <th width="150">本期结束时间</th>
+				</tr>
+			</thead>
+			<tbody id="ajax-table-tbody" onclick="SlecetChangeForNoop()">
+				{volist name="FinancialData" id="financialData" key="k"}
+				<tr>
+					<td><div class="layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div></td>
+                    <td>{$financialData.ShopName}</td>
+                    <td>{$financialData.MarketplaceID}</td>
+                    <td>{$financialData.BeginningBalanceCurrencyAmount}</td>
+                    <td>{$financialData.BeginningBalanceCurrencyCode}</td>
+                    <td>{$financialData.BeforeCNY}</td>
+                    <td>{$financialData.OriginalTotalCurrencyAmount}</td>
+                    <td>{$financialData.OriginalTotalCurrencyCode}</td>
+                    <td>{$financialData.EndCNY}</td>
+                    <td>{$financialData.ProcessingStatus}</td>
+                    <td>{$financialData.FundTransferStatus}</td>
+                    <td>{$financialData.FundTransferDate}</td>
+                    <td>{$financialData.FinancialEventGroupStart}</td>
+                    <td>{$financialData.FinancialEventGroupEnd}</td>
+					</td>
+				</tr>
+				{/volist}   
+			</tbody> 
+            <tfoot id="ajax-table-tfoot" style="color:green;background-color: rgb(255, 245, 245)">
+                <tr>
+                    <td>总计</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>0</td>
+                    <td></td>
+                    <td></td>
+                    <td>0</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+          </tfoot>
+        </table>
+	</div>
+
+    <div id="sm-box">
+        <div style="display: inline-block;vertical-align:middle;width: 80%;">
+            <div id="hl-page" style="margin-top: 5px; display: inline-block;vertical-align:middle;">{$page.pageList}</div>
+            <img onclick="javascript:location.reload()" src="__static__/images/hl-refresh.jpg" style="margin-left: 5px; display: inline-block;vertical-align:middle;">
+            <select id="hl-display-num" onchange="record_number_change()" style="display: inline-block; width: 80px; height: 1%; margin-left: 10px;">
+                <option value="10">10</option>
+                <option value="30" {if condition="$listRows eq 30"} selected="selected" {/if}>30</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="300">300</option>
+            </select>
+        </div><div id="record_detail" style="display: inline-block;vertical-align:middle;text-align: right; width: 20%;"> 共 {$page.totalRows} 条， 共 {$page.totalPages} 页</div>
+    </div>
+
+</body>
+
+<script type="text/javascript">  
+
+    $(document).ready(function(){ 
+         $("#SelectShop").click(function(){
+            $("#ShopName").toggle(); 
+            $("#ProcessingStatus").hide(); 
+            $("#FundTransferStatus").hide(); 
+            // var ShopName  = document.getElementById("ShopName");
+            // ShopName.size = ShopName.options.length;
+         });
+
+         $("#SelectProcessingStatus").click(function(){
+            $("#ProcessingStatus").toggle(); 
+            $("#ShopName").hide(); 
+            $("#FundTransferStatus").hide(); 
+            // var ProcessingStatus  = document.getElementById("ProcessingStatus");
+            // ProcessingStatus.size = ProcessingStatus.options.length;
+         });
+
+         $("#SelectFundTransferStatus").click(function(){
+            $("#FundTransferStatus").toggle(); 
+            $("#ProcessingStatus").hide(); 
+            $("#ShopName").hide(); 
+            // var FundTransferStatus  = document.getElementById("FundTransferStatus");
+            // FundTransferStatus.size = FundTransferStatus.options.length;
+         });
+    });
+
+
+    function ShopNameSlecetChange(){
+        $("#ShopName").hide();      
+        Queryinformation();
+    }
+
+
+    function ProcessingStatusSlecetChange(){
+        $("#ProcessingStatus").hide();      
+        Queryinformation();
+    }
+
+
+    function FundTransferStatusSlecetChange(){
+        $("#FundTransferStatus").hide();      
+        Queryinformation();
+    }
+
+
+    function SlecetChangeForNoop(){
+        $("#ShopName").hide();
+        $("#ProcessingStatus").hide();
+        $("#FundTransferStatus").hide(); 
+    }
+
+
+
+	layui.use('laydate', function(){
+	var laydate = layui.laydate;
+		//常规用法
+		laydate.render({
+			elem: '#QueryStartTime'
+			,type: 'datetime'
+			,theme: 'molv'
+			,format: 'yyyy-MM-dd HH:mm:ss'
+		});
+	});
+
+
+	layui.use('laydate', function(){
+	var laydate = layui.laydate;
+		//常规用法
+		laydate.render({
+			elem: '#QueryEndTime'
+			,type: 'datetime'
+			,theme: 'molv'
+			,format: 'yyyy-MM-dd HH:mm:ss'
+		});
+	});
+
+
+    //查询亚马逊订单信息
+    function Queryinformation(){
+        var listRows = $("#hl-display-num").val(); //一页显示记录条数
+        var ShopName = $("#ShopName").val(); //当前页数
+        var StartTime = $("#QueryStartTime").val(); 
+        var EndTime = $("#QueryEndTime").val(); 
+        var ProcessingStatus = $("#ProcessingStatus").val();
+        var FundTransferStatus = $("#FundTransferStatus").val();
+
+        if(ShopName == undefined ){
+            return;
+        }
+        //参数列表
+        var param = {ShopName:ShopName, StartTime:StartTime, EndTime:EndTime, listRows:listRows, ProcessingStatus:ProcessingStatus, FundTransferStatus:FundTransferStatus};
+        $.post("{:url('Queryinformation')}", param, function(data, status){
+            var html = '';
+    	    $.each(data.FinancialData, function (key, value){
+            html += '<tr>' +
+                    '<td><div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                    '<td>' + value.ShopName + '</td>' +
+                    '<td>' + value.MarketplaceID + '</td>' +
+                    '<td>' + value.BeginningBalanceCurrencyAmount + '</td>' +  
+                    '<td>' + value.BeginningBalanceCurrencyCode + '</td>' +
+                    '<td>' + value.BeforeCNY + '</td>' +
+                    '<td>' + value.OriginalTotalCurrencyAmount + '</td>' +
+                    '<td>' + value.OriginalTotalCurrencyCode + '</td>' +
+                    '<td>' + value.EndCNY + '</td>' +
+                    '<td>' + value.ProcessingStatus + '</td>' +
+                    '<td>' + value.FundTransferStatus + '</td>' +
+                    '<td>' + value.FundTransferDate + '</td>' +
+                    '<td>' + value.FinancialEventGroupStart + '</td>' +
+                    '<td>' + value.FinancialEventGroupEnd + '</td>' +
+                '</tr>';
+            });
+            var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+            var tfoothtml = '<tr><td>总计</td><td></td><td></td><td></td><td></td><td>' + data.Total.BeforeTotal + '</td><td></td><td></td><td>' + data.Total.EndTotal + '</td><td></td><td></td><td></td><td></td><td></td></tr>';
+            $("#ajax-table-tbody").html(html);
+            $("#ajax-table-tfoot").html(tfoothtml);
+            $("#hl-page").html(data.page.pageList);
+            $("#record_detail").html(record);
+        }, 'json');
+    }
+
+
+    //改变显示记录条数
+    function record_number_change(){
+        var listRows = $("#hl-display-num").val(); //一页显示记录条数
+        var ShopName = $("#ShopName").val(); //当前页数
+        var StartTime = $("#QueryStartTime").val(); 
+        var EndTime = $("#QueryEndTime").val(); 
+        var ProcessingStatus = $("#ProcessingStatus").val();
+        var FundTransferStatus = $("#FundTransferStatus").val();
+        //参数列表
+        var param = {ShopName:ShopName, StartTime:StartTime, EndTime:EndTime, listRows:listRows, ProcessingStatus:ProcessingStatus, FundTransferStatus:FundTransferStatus};
+
+        $.post("{:url('getDisplayPage')}", param, function(data, status){
+                var html = '';
+                $.each(data.FinancialData, function (key, value) {
+                    html += '<tr><td>' +
+                            '<div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                            '<td>' + value.ShopName + '</td>' +
+                            '<td>' + value.MarketplaceID + '</td>' +
+                            '<td>' + value.BeginningBalanceCurrencyAmount + '</td>' +
+                            '<td>' + value.BeginningBalanceCurrencyCode + '</td>' +
+                            '<td>' + value.BeforeCNY + '</td>' +
+                            '<td>' + value.OriginalTotalCurrencyAmount + '</td>' +
+                            '<td>' + value.OriginalTotalCurrencyCode + '</td>' +
+                            '<td>' + value.EndCNY + '</td>' +
+                            '<td>' + value.ProcessingStatus + '</td>' +
+                            '<td>' + value.FundTransferStatus + '</td>' +
+                            '<td>' + value.FundTransferDate + '</td>' +
+                            '<td>' + value.FinancialEventGroupStart + '</td>' +
+                            '<td>' + value.FinancialEventGroupEnd + '</td>' +
+                        '</tr>';
+                 });
+                var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+                var tfoothtml = '<tr><td>总计</td><td></td><td></td><td></td><td></td><td>' + data.Total.BeforeTotal + '</td><td></td><td></td><td>' + data.Total.EndTotal + '</td><td></td><td></td><td></td><td></td><td></td></tr>';
+                $("#ajax-table-tbody").html(html);
+                $("#ajax-table-tfoot").html(tfoothtml);
+                $("#hl-page").html(data.page.pageList);
+                $("#record_detail").html(record);
+            },'json');
+
+        //修改一页显示的记录条数
+        var myArray=new Array()
+        myArray[10] = '<option value="10">10</option>';
+        myArray[30] = '<option value="30">30</option>';
+        myArray[50] = '<option value="50">50</option>';
+        myArray[100] = '<option value="100">100</option>';
+        myArray[300] = '<option value="300">300</option>';
+
+        myArray[listRows] = '<option value="' + listRows + '" selected>' + listRows + '</option>';
+        var html = myArray[10] + myArray[30] + myArray[50] + myArray[100] + myArray[300];
+
+        $("#hl-display-num").html(html);
+    }
+
+
+    //分页搜索结果，AJAX异步返回结果
+    function page_show(p){ //user函数名 一定要和action中的第三个参数一致上面有
+        var p = p; //当前页数
+        var listRows = $("#hl-display-num").val(); //一页显示记录条数
+        var ShopName = $("#ShopName").val(); //当前页数
+        var StartTime = $("#QueryStartTime").val(); 
+        var EndTime = $("#QueryEndTime").val(); 
+        var ProcessingStatus = $("#ProcessingStatus").val();
+        var FundTransferStatus = $("#FundTransferStatus").val();
+
+        //参数列表
+        var param = {ShopName:ShopName, StartTime:StartTime, EndTime:EndTime, listRows:listRows, p:p, ProcessingStatus:ProcessingStatus, FundTransferStatus:FundTransferStatus};
+        $.get("{:url('getDisplayPage')}", param, function(data, status){ //用get方法发送信息到UserAction中的user方法
+            var html = '';
+            $.each(data.FinancialData, function (key, value) {
+                html += '<tr><td>' +
+                            '<div class="layui-form-checkbox" lay-skin="primary" data-id="2"><i class="layui-icon">&#xe605;</i></div></td>' +
+                            '<td>' + value.ShopName + '</td>' +
+                            '<td>' + value.MarketplaceID + '</td>' +
+                            '<td>' + value.BeginningBalanceCurrencyAmount + '</td>' +
+                            '<td>' + value.BeginningBalanceCurrencyCode + '</td>' +
+                            '<td>' + value.BeforeCNY + '</td>' +
+                            '<td>' + value.OriginalTotalCurrencyAmount + '</td>' +
+                            '<td>' + value.OriginalTotalCurrencyCode + '</td>' +
+                            '<td>' + value.EndCNY + '</td>' +
+                            '<td>' + value.ProcessingStatus + '</td>' +
+                            '<td>' + value.FundTransferStatus + '</td>' +
+                            '<td>' + value.FundTransferDate + '</td>' +
+                            '<td>' + value.FinancialEventGroupStart + '</td>' +
+                            '<td>' + value.FinancialEventGroupEnd + '</td>' +
+                        '</tr>';
+             });
+            var record = '共 ' +  data.page.totalRows + ' 条， 共 ' + data.page.totalPages + ' 页';
+            var tfoothtml = '<tr><td>总计</td><td></td><td></td><td></td><td></td><td>' + data.Total.BeforeTotal + '</td><td></td><td></td><td>' + data.Total.EndTotal + '</td><td></td><td></td><td></td><td></td><td></td></tr>';
+            $("#ajax-table-tbody").html(html);
+            $("#ajax-table-tfoot").html(tfoothtml);
+            $("#hl-page").html(data.page.pageList);
+            $("#record_detail").html(record);   
+        }, 'json');
+    }
+
+
+    //改变显示记录条数
+    function UpdateExchangeRate(){
+        //参数列表
+        var param = {}; 
+
+        $.post("{:url('UpdateExchangeRate')}", param, function(data, status){},'json');
+    }
+
+
+    //改变显示记录条数
+    function GetExchangeRate(){
+        var ToMoney = $('#ToMoney').val(); //需要搜索的关键字
+
+        //参数列表
+        var param = {ToMoney:ToMoney}; 
+
+        $.post("{:url('GetExchangeRate')}", param, function(data, status){
+            var rate = data.RateData['ExchangeRate'] + '(' + data.RateData['UpdateTime'] + ')';
+            // alert(rate);
+            $("#ViewRate").attr("value",rate);
+        },'json');
+    }
+
+</script> 
+{include file="public/foot"}
